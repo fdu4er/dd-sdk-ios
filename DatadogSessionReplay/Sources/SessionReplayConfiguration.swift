@@ -87,6 +87,7 @@ extension SessionReplay {
         ///   - defaultPrivacyLevel: The way sensitive content (e.g. text) should be masked. Default: `.mask`.
         ///   - startRecordingImmediately: If the recording should start automatically. When `true`, the recording starts automatically; when `false` it doesn't, and the recording will need to be started manually. Default: `true`.
         ///   - customEndpoint: Custom server url for sending replay data. Default: `nil`.
+        @available(*, deprecated, message: "This will be removed in future versions of the SDK. Use `SessionReplay.Configuration(replaySampleRate:textAndInputPrivacy:imagePrivacy:touchPrivacy:)` instead.")
         public init(
             replaySampleRate: Float,
             defaultPrivacyLevel: SessionReplayPrivacyLevel = .mask,
@@ -95,8 +96,9 @@ extension SessionReplay {
         ) {
             self.replaySampleRate = replaySampleRate
             self.defaultPrivacyLevel = defaultPrivacyLevel
-            self.textAndInputPrivacyLevel = .maskAll
-            self.touchPrivacyLevel = .hide
+            let newPrivacyLevels = Self.convertPrivacyLevel(from: defaultPrivacyLevel)
+            self.textAndInputPrivacyLevel = newPrivacyLevels.textAndInputPrivacy
+            self.touchPrivacyLevel = newPrivacyLevels.touchPrivacy
             self.startRecordingImmediately = startRecordingImmediately
             self.customEndpoint = customEndpoint
         }
@@ -105,6 +107,52 @@ extension SessionReplay {
         public mutating func setAdditionalNodeRecorders(_ additionalNodeRecorders: [SessionReplayNodeRecorder]) {
             self._additionalNodeRecorders = additionalNodeRecorders
         }
+
+        /// Private method to convert deprecated `SessionReplayPrivacyLevel` to the new privacy levels.
+        private static func convertPrivacyLevel(from oldPrivacyLevel: SessionReplayPrivacyLevel)
+        -> (textAndInputPrivacy: SessionReplayTextAndInputPrivacyLevel, touchPrivacy: SessionReplayTouchPrivacyLevel) {
+            switch oldPrivacyLevel {
+            case .allow:
+                return (
+                    textAndInputPrivacy: .maskSensitiveInputs,
+                    touchPrivacy: .show
+                )
+            case .maskUserInput:
+                return (
+                    textAndInputPrivacy: .maskAllInputs,
+                    touchPrivacy: .hide
+                )
+            case .mask:
+                return (
+                    textAndInputPrivacy: .maskAll,
+                    touchPrivacy: .hide
+                )
+            }
+        }
     }
 }
+
+/*private extension SessionReplay.Configuration {
+    /// Method that converts deprecated `SessionReplayPrivacyLevel` to the new privacy levels.
+    static func convertPrivacyLevel(from oldPrivacyLevel: SessionReplayPrivacyLevel)
+    -> (textAndInputPrivacy: SessionReplayTextAndInputPrivacyLevel, touchPrivacy: SessionReplayTouchPrivacyLevel) {
+        switch oldPrivacyLevel {
+        case .mask:
+            return (
+                textAndInputPrivacy: .maskAll,
+                touchPrivacy: .hide
+            )
+        case .maskUserInput:
+            return (
+                textAndInputPrivacy: .maskAllInputs,
+                touchPrivacy: .hide
+            )
+        case .allow:
+            return (
+                textAndInputPrivacy: .maskSensitiveInputs,
+                touchPrivacy: .show
+            )
+        }
+    }
+}*/
 #endif

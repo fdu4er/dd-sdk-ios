@@ -22,8 +22,6 @@ internal protocol Recording {
 public class Recorder: Recording {
     /// The context of recording next snapshot.
     public struct Context: Equatable {
-        /// The content recording policy at the moment of requesting snapshot.
-        public let privacy: SessionReplayPrivacyLevel
         /// The content recording policy for texts and inputs at the moment of requesting snapshot.
         public let textAndInputPrivacy: SessionReplayTextAndInputPrivacyLevel
         /// The content recording policy for touches at the moment of requesting snapshot.
@@ -40,7 +38,6 @@ public class Recorder: Recording {
         let date: Date
 
         internal init(
-            privacy: PrivacyLevel,
             textAndInputPrivacy: TextAndInputPrivacyLevel,
             touchPrivacy: TouchPrivacyLevel,
             applicationID: String,
@@ -49,7 +46,6 @@ public class Recorder: Recording {
             viewServerTimeOffset: TimeInterval?,
             date: Date = Date()
         ) {
-            self.privacy = privacy
             self.textAndInputPrivacy = textAndInputPrivacy
             self.touchPrivacy = touchPrivacy
             self.applicationID = applicationID

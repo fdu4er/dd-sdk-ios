@@ -144,7 +144,6 @@ class SegmentJSONTests: XCTestCase {
 
     private func generateEnrichedRecordJSONs(for segment: SRSegment) throws -> [SegmentJSON] {
         let context = Recorder.Context(
-            privacy: .mockRandom(),
             textAndInputPrivacy: .mockRandom(),
             touchPrivacy: .mockRandom(),
             rumContext: RUMContext(

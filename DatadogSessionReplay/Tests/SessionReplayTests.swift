@@ -63,7 +63,7 @@ class SessionReplayTests: XCTestCase {
         // Then
         let sr = try XCTUnwrap(core.get(feature: SessionReplayFeature.self))
         XCTAssertEqual(sr.recordingCoordinator.sampler.samplingRate, 42)
-        XCTAssertEqual(sr.recordingCoordinator.privacy, .mask)
+        XCTAssertEqual(sr.recordingCoordinator.textAndInputPrivacy, .maskAll)
         XCTAssertEqual(sr.recordingCoordinator.touchPrivacy, .hide)
         XCTAssertNil((sr.requestBuilder as? SegmentRequestBuilder)?.customUploadURL)
         let r = try XCTUnwrap(core.get(feature: ResourcesFeature.self))
@@ -81,7 +81,6 @@ class SessionReplayTests: XCTestCase {
         // Then
         let sr = try XCTUnwrap(core.get(feature: SessionReplayFeature.self))
         XCTAssertEqual(sr.recordingCoordinator.sampler.samplingRate, 42)
-        XCTAssertEqual(sr.recordingCoordinator.privacy, .mask)
         XCTAssertEqual(sr.recordingCoordinator.textAndInputPrivacy, textAndInputPrivacy)
         XCTAssertEqual(sr.recordingCoordinator.touchPrivacy, touchPrivacy)
         XCTAssertNil((sr.requestBuilder as? SegmentRequestBuilder)?.customUploadURL)
@@ -129,8 +128,6 @@ class SessionReplayTests: XCTestCase {
     }
 
     func testWhenEnabledWithRandomPrivacyLevel() throws {
-        let randomPrivacy: PrivacyLevel = .mockRandom()
-        config.defaultPrivacyLevel = randomPrivacy
         let textAndInputPrivacy: SessionReplayTextAndInputPrivacyLevel = .mockRandom()
         config.textAndInputPrivacyLevel = textAndInputPrivacy
         let randomTouchPrivacy: SessionReplayTouchPrivacyLevel = .mockRandom()
@@ -141,7 +138,6 @@ class SessionReplayTests: XCTestCase {
 
         // Then
         let sr = try XCTUnwrap(core.get(feature: SessionReplayFeature.self))
-        XCTAssertEqual(sr.recordingCoordinator.privacy, randomPrivacy)
         XCTAssertEqual(sr.recordingCoordinator.textAndInputPrivacy, textAndInputPrivacy)
         XCTAssertEqual(sr.recordingCoordinator.touchPrivacy, randomTouchPrivacy)
     }
@@ -161,7 +157,6 @@ class SessionReplayTests: XCTestCase {
 
         // Then
         let sr = try XCTUnwrap(core.get(feature: SessionReplayFeature.self))
-        XCTAssertEqual(sr.recordingCoordinator.privacy, randomPrivacy)
         XCTAssertEqual(sr.recordingCoordinator.textAndInputPrivacy, randomTextAndInputPrivacy)
         XCTAssertEqual(sr.recordingCoordinator.touchPrivacy, randomTouchPrivacy)
     }
