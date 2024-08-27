@@ -64,6 +64,7 @@ class SessionReplayTests: XCTestCase {
         let sr = try XCTUnwrap(core.get(feature: SessionReplayFeature.self))
         XCTAssertEqual(sr.recordingCoordinator.sampler.samplingRate, 42)
         XCTAssertEqual(sr.recordingCoordinator.privacy, .mask)
+        XCTAssertEqual(sr.recordingCoordinator.imagePrivacy, .maskAll)
         XCTAssertEqual(sr.recordingCoordinator.touchPrivacy, .hide)
         XCTAssertNil((sr.requestBuilder as? SegmentRequestBuilder)?.customUploadURL)
         let r = try XCTUnwrap(core.get(feature: ResourcesFeature.self))
@@ -72,7 +73,7 @@ class SessionReplayTests: XCTestCase {
 
     func testWhenEnabledWithDefaultConfigurationWithNewAPI() throws {
         let textAndInputPrivacy: SessionReplayTextAndInputPrivacyLevel = .mockRandom()
-        let touchPrivacy: SessionReplayTouchPrivacyLevel = .mockRandom()
+        let touchPrivacy: TouchPrivacyLevel = .mockRandom()
         config = SessionReplay.Configuration(replaySampleRate: 42, textAndInputPrivacyLevel: textAndInputPrivacy, touchPrivacyLevel: touchPrivacy)
 
         // When
@@ -133,8 +134,9 @@ class SessionReplayTests: XCTestCase {
         config.defaultPrivacyLevel = randomPrivacy
         let textAndInputPrivacy: SessionReplayTextAndInputPrivacyLevel = .mockRandom()
         config.textAndInputPrivacyLevel = textAndInputPrivacy
-        let randomTouchPrivacy: SessionReplayTouchPrivacyLevel = .mockRandom()
+        let randomTouchPrivacy: TouchPrivacyLevel = .mockRandom()
         config.touchPrivacyLevel = randomTouchPrivacy
+        let randomImagePrivacy: ImagePrivacyLevel = .mockRandom()
 
         // When
         SessionReplay.enable(with: config, in: core)
@@ -144,6 +146,7 @@ class SessionReplayTests: XCTestCase {
         XCTAssertEqual(sr.recordingCoordinator.privacy, randomPrivacy)
         XCTAssertEqual(sr.recordingCoordinator.textAndInputPrivacy, textAndInputPrivacy)
         XCTAssertEqual(sr.recordingCoordinator.touchPrivacy, randomTouchPrivacy)
+        XCTAssertEqual(sr.recordingCoordinator.imagePrivacy, randomImagePrivacy)
     }
 
     func testWhenEnabledWithRandomPrivacyLevelWithNewAPI() throws {
@@ -153,8 +156,10 @@ class SessionReplayTests: XCTestCase {
         config.defaultPrivacyLevel = randomPrivacy
         let randomTextAndInputPrivacy: SessionReplayTextAndInputPrivacyLevel = .mockRandom()
         config.textAndInputPrivacyLevel = randomTextAndInputPrivacy
-        let randomTouchPrivacy: SessionReplayTouchPrivacyLevel = .mockRandom()
+        let randomTouchPrivacy: TouchPrivacyLevel = .mockRandom()
         config.touchPrivacyLevel = randomTouchPrivacy
+        let randomImagePrivacy: ImagePrivacyLevel = .mockRandom()
+        config.imagePrivacyLevel = randomImagePrivacy
 
         // When
         SessionReplay.enable(with: config, in: core)
@@ -164,6 +169,7 @@ class SessionReplayTests: XCTestCase {
         XCTAssertEqual(sr.recordingCoordinator.privacy, randomPrivacy)
         XCTAssertEqual(sr.recordingCoordinator.textAndInputPrivacy, randomTextAndInputPrivacy)
         XCTAssertEqual(sr.recordingCoordinator.touchPrivacy, randomTouchPrivacy)
+        XCTAssertEqual(sr.recordingCoordinator.imagePrivacy, randomImagePrivacy)
     }
 
     func testWhenEnabledWithCustomEndpoint() throws {
